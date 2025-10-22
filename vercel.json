@@ -16,12 +16,31 @@
     {
       "src": "favicon.ico",
       "use": "@vercel/static"
+    },
+    {
+      "src": "manifest.json",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "service-worker.js",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/favicon.ico",
       "dest": "/favicon.ico"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/service-worker.js",
+      "dest": "/service-worker.js",
+      "headers": {
+        "Service-Worker-Allowed": "/"
+      }
     },
     {
       "src": "/assets/(.*)",

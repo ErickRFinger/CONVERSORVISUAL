@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversor de Arquivos</title>
+    <meta name="description" content="Sistema completo de conversão de imagens, documentos e arquivos. Rápido, seguro e fácil de usar!">
+    <meta name="theme-color" content="#FFD700">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Conversor VT">
+    
+    <!-- Estilos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -40,21 +50,34 @@
             <div class="tab-content" id="converter-panels">
                 <!-- ########## IMAGES PANEL ########## -->
                 <div class="tab-pane fade show active" id="images-panel" role="tabpanel">
-                    <!-- Input Format -->
-                    <div class="input-group mb-4 mx-auto" style="max-width: 400px;">
-                        <label class="input-group-text" for="image-input-format">Formato de Entrada:</label>
-                        <select class="form-select" id="image-input-format">
-                            <option value="any" selected>Qualquer Imagem</option>
-                            <option value="jpeg">JPG/JPEG</option>
-                            <option value="png">PNG</option>
-                            <option value="webp">WEBP</option>
-                            <option value="bmp">BMP</option>
-                            <option value="gif">GIF</option>
-                            <option value="tiff">TIFF</option>
-                            <option value="svg+xml">SVG</option>
-                            <option value="x-icon">ICO</option>
-                        </select>
+                    <!-- Mode Selection -->
+                    <div class="text-center mb-4">
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="image-mode" id="single-image-mode" autocomplete="off" checked>
+                            <label class="btn btn-outline-primary" for="single-image-mode"><i class="bi bi-image me-2"></i>Única Imagem</label>
+                            
+                            <input type="radio" class="btn-check" name="image-mode" id="batch-image-mode" autocomplete="off">
+                            <label class="btn btn-outline-primary" for="batch-image-mode"><i class="bi bi-images me-2"></i>Lote (Múltiplas)</label>
+                        </div>
                     </div>
+
+                    <!-- Single Image Mode -->
+                    <div id="single-image-section">
+                        <!-- Input Format -->
+                        <div class="input-group mb-4 mx-auto" style="max-width: 400px;">
+                            <label class="input-group-text" for="image-input-format">Formato de Entrada:</label>
+                            <select class="form-select" id="image-input-format">
+                                <option value="any" selected>Qualquer Imagem</option>
+                                <option value="jpeg">JPG/JPEG</option>
+                                <option value="png">PNG</option>
+                                <option value="webp">WEBP</option>
+                                <option value="bmp">BMP</option>
+                                <option value="gif">GIF</option>
+                                <option value="tiff">TIFF</option>
+                                <option value="svg+xml">SVG</option>
+                                <option value="x-icon">ICO</option>
+                            </select>
+                        </div>
 
                     <!-- Drop Zone -->
                     <div id="image-drop-zone" class="drop-zone">
@@ -90,10 +113,73 @@
                                             <option value="heif">HEIF</option>
                                         </select>
                                     </div>
+                                    <div class="quality-slider-container">
+                                        <label for="image-quality-slider" class="form-label">
+                                            <strong>Qualidade:</strong> <span id="quality-value">90</span>%
+                                        </label>
+                                        <input type="range" class="form-range quality-slider" id="image-quality-slider" min="1" max="100" value="90">
+                                    </div>
                                     <button id="image-convert-btn" class="btn btn-success w-100 mb-3"><i class="bi bi-gear-fill me-2"></i>Converter</button>
                                     <a id="image-download-link" class="btn btn-info w-100 d-none" download><i class="bi bi-download me-2"></i>Baixar Imagem</a>
                                     <button id="image-reset-btn" class="btn btn-secondary w-100 mt-3 d-none"><i class="bi bi-arrow-clockwise me-2"></i>Converter Outra</button>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- Batch Image Mode -->
+                    <div id="batch-image-section" class="d-none">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>Conversão em Lote:</strong> Selecione múltiplas imagens para converter todas de uma vez!
+                        </div>
+
+                        <!-- Drop Zone for Batch -->
+                        <div id="batch-drop-zone" class="drop-zone">
+                            <div class="drop-zone-content">
+                                <i class="bi bi-images icon-lg"></i>
+                                <p class="mt-3">Arraste múltiplas imagens aqui</p>
+                                <p class="text-muted">ou</p>
+                                <button id="batch-browse-btn" class="btn btn-primary">Selecione os Arquivos</button>
+                            </div>
+                            <input type="file" id="batch-file-input" accept="image/*" multiple hidden>
+                        </div>
+
+                        <!-- Batch Preview and Controls -->
+                        <div id="batch-preview-controls" class="preview-controls-wrapper d-none">
+                            <div class="controls-box p-4 rounded shadow-sm mb-3">
+                                <h5 class="mb-3">Imagens Selecionadas (<span id="batch-count">0</span>)</h5>
+                                <div id="batch-file-list" class="mb-3"></div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Converter para:</label>
+                                        <select class="form-select mb-2" id="batch-format">
+                                            <option value="png">PNG</option>
+                                            <option value="jpeg">JPG/JPEG</option>
+                                            <option value="webp">WEBP</option>
+                                            <option value="bmp">BMP</option>
+                                            <option value="gif">GIF</option>
+                                            <option value="tiff">TIFF</option>
+                                            <option value="avif">AVIF</option>
+                                            <option value="heif">HEIF</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Qualidade: <span id="batch-quality-value">90</span>%</label>
+                                        <input type="range" class="form-range" id="batch-quality-slider" min="1" max="100" value="90">
+                                    </div>
+                                </div>
+
+                                <button id="batch-convert-btn" class="btn btn-success w-100 mb-2">
+                                    <i class="bi bi-gear-fill me-2"></i>Converter Todas
+                                </button>
+                                <div id="batch-progress" class="d-none mb-3"></div>
+                                <div id="batch-results" class="d-none"></div>
+                                <button id="batch-reset-btn" class="btn btn-secondary w-100 d-none">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Converter Outras
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -238,5 +324,71 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/script.js"></script>
+    
+    <!-- PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registrado:', registration.scope);
+                        
+                        // Verificar atualizações
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // Nova versão disponível
+                                    if (confirm('Nova versão disponível! Atualizar agora?')) {
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('❌ Erro ao registrar Service Worker:', error);
+                    });
+            });
+
+            // Recarregar quando novo SW ativar
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    window.location.reload();
+                    refreshing = true;
+                }
+            });
+        }
+
+        // Prompt de instalação PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Criar botão de instalação
+            const installBtn = document.createElement('button');
+            installBtn.className = 'btn btn-warning btn-sm position-fixed';
+            installBtn.style.bottom = '20px';
+            installBtn.style.right = '20px';
+            installBtn.style.zIndex = '9999';
+            installBtn.innerHTML = '<i class="bi bi-download me-1"></i>Instalar App';
+            installBtn.onclick = async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`Usuário ${outcome === 'accepted' ? 'aceitou' : 'recusou'} a instalação`);
+                    deferredPrompt = null;
+                    installBtn.remove();
+                }
+            };
+            
+            setTimeout(() => {
+                document.body.appendChild(installBtn);
+            }, 3000);
+        });
+    </script>
 </body>
 </html>

@@ -11,6 +11,80 @@ const tar = require('tar');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// ===== RATE LIMITING =====
+const requestCounts = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minuto
+const MAX_REQUESTS_PER_WINDOW = 20; // 20 requisições por minuto
+
+function rateLimiter(req, res, next) {
+    const ip = req.ip || req.connection.remoteAddress;
+    const now = Date.now();
+    
+    if (!requestCounts.has(ip)) {
+        requestCounts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+        return next();
+    }
+    
+    const data = requestCounts.get(ip);
+    
+    if (now > data.resetTime) {
+        // Resetar contador
+        requestCounts.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+        return next();
+    }
+    
+    if (data.count >= MAX_REQUESTS_PER_WINDOW) {
+        return res.status(429).json({ 
+            error: 'Muitas requisições. Tente novamente em alguns momentos.',
+            retryAfter: Math.ceil((data.resetTime - now) / 1000)
+        });
+    }
+    
+    data.count++;
+    next();
+}
+
+// Limpar requestCounts periodicamente
+setInterval(() => {
+    const now = Date.now();
+    for (const [ip, data] of requestCounts.entries()) {
+        if (now > data.resetTime) {
+            requestCounts.delete(ip);
+        }
+    }
+}, RATE_LIMIT_WINDOW);
+
+// ===== VALIDAÇÃO DE ARQUIVOS =====
+const ALLOWED_MIME_TYPES = {
+    image: [
+        'image/jpeg', 'image/png', 'image/gif', 'image/webp', 
+        'image/bmp', 'image/tiff', 'image/svg+xml', 'image/x-icon'
+    ],
+    document: [
+        'text/plain', 'text/html', 'application/pdf'
+    ],
+    archive: [
+        'application/zip', 'application/x-tar', 
+        'application/gzip', 'application/x-gzip'
+    ]
+};
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+function validateFile(file, type) {
+    // Validar tamanho
+    if (file.size > MAX_FILE_SIZE) {
+        return { valid: false, error: `Arquivo muito grande! Máximo: ${MAX_FILE_SIZE / 1024 / 1024}MB` };
+    }
+    
+    // Validar MIME type
+    if (!ALLOWED_MIME_TYPES[type].includes(file.mimetype)) {
+        return { valid: false, error: `Tipo de arquivo não permitido: ${file.mimetype}` };
+    }
+    
+    return { valid: true };
+}
+
 // Detectar se está rodando no Vercel
 const isVercel = process.env.VERCEL === '1';
 
@@ -90,14 +164,29 @@ app.use('/converted', express.static(convertedDir));
 // ########## API ROUTES ##########
 
 // Image Conversion Route
-app.post('/convert/image', upload.single('file'), async (req, res) => {
+app.post('/convert/image', rateLimiter, upload.single('file'), async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'Nenhum arquivo enviado.' });
     }
 
-    const { format } = req.body;
+    // Validar arquivo
+    const validation = validateFile(req.file, 'image');
+    if (!validation.valid) {
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ error: validation.error });
+    }
+
+    const { format, quality } = req.body;
     if (!format) {
+        fs.unlinkSync(req.file.path);
         return res.status(400).json({ error: 'Formato de conversão não especificado.' });
+    }
+
+    // Usar qualidade personalizada ou padrão
+    const imageQuality = parseInt(quality) || 90;
+    if (imageQuality < 1 || imageQuality > 100) {
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ error: 'Qualidade deve estar entre 1 e 100.' });
     }
 
     const inputPath = req.file.path;
@@ -105,23 +194,29 @@ app.post('/convert/image', upload.single('file'), async (req, res) => {
     const outputPath = path.join(convertedDir, outputFileName);
 
     try {
-        // Configure Sharp with high quality settings
+        // Configure Sharp with quality settings
         let sharpInstance = sharp(inputPath);
 
-        // Apply format-specific optimizations
+        // Apply format-specific optimizations with custom quality
         switch(format) {
             case 'jpeg':
             case 'jpg':
-                sharpInstance = sharpInstance.jpeg({ quality: 90, mozjpeg: true });
+                sharpInstance = sharpInstance.jpeg({ quality: imageQuality, mozjpeg: true });
                 break;
             case 'png':
-                sharpInstance = sharpInstance.png({ compressionLevel: 9, adaptiveFiltering: true });
+                sharpInstance = sharpInstance.png({ compressionLevel: 9, adaptiveFiltering: true, quality: imageQuality });
                 break;
             case 'webp':
-                sharpInstance = sharpInstance.webp({ quality: 90, lossless: false });
+                sharpInstance = sharpInstance.webp({ quality: imageQuality, lossless: false });
                 break;
             case 'tiff':
-                sharpInstance = sharpInstance.tiff({ quality: 90, compression: 'lzw' });
+                sharpInstance = sharpInstance.tiff({ quality: imageQuality, compression: 'lzw' });
+                break;
+            case 'avif':
+                sharpInstance = sharpInstance.avif({ quality: imageQuality });
+                break;
+            case 'heif':
+                sharpInstance = sharpInstance.heif({ quality: imageQuality });
                 break;
             default:
                 sharpInstance = sharpInstance.toFormat(format);

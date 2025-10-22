@@ -186,3 +186,223 @@ footer {
         font-size: 0.9rem;
     }
 }
+
+/* ===== DARK MODE ===== */
+body.dark-mode {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+    color: #e0e0e0;
+}
+
+body.dark-mode .converter-wrapper {
+    background-color: rgba(30, 30, 45, 0.95);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+body.dark-mode .nav-pills .nav-link {
+    color: #e0e0e0;
+}
+
+body.dark-mode .nav-pills .nav-link:not(.active):hover {
+    background-color: rgba(255, 215, 0, 0.1);
+}
+
+body.dark-mode .drop-zone {
+    border-color: #FFA500;
+    background-color: rgba(255, 215, 0, 0.05);
+}
+
+body.dark-mode .drop-zone.dragover {
+    background-color: rgba(255, 215, 0, 0.2);
+}
+
+body.dark-mode .controls-box {
+    background-color: rgba(40, 40, 60, 0.8);
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+body.dark-mode .preview-container {
+    background-color: rgba(20, 20, 30, 0.8);
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+body.dark-mode .form-select,
+body.dark-mode .form-control {
+    background-color: rgba(40, 40, 60, 0.8);
+    border-color: rgba(255, 215, 0, 0.3);
+    color: #e0e0e0;
+}
+
+body.dark-mode .modal-content {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+body.dark-mode .list-group-item {
+    background-color: rgba(40, 40, 60, 0.8);
+    border-color: rgba(255, 215, 0, 0.2);
+    color: #e0e0e0;
+}
+
+body.dark-mode .alert-success {
+    background-color: rgba(25, 135, 84, 0.3);
+    border-color: #198754;
+    color: #75b798;
+}
+
+/* ===== MELHORIAS VISUAIS ===== */
+
+/* Posicionamento relativo do header para botões */
+header {
+    position: relative;
+}
+
+/* Animação suave para modais */
+.modal {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Efeito de zoom na imagem */
+.preview-container {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.preview-container:hover {
+    transform: scale(1.02);
+}
+
+/* Barra de progresso personalizada */
+.progress {
+    background-color: rgba(255, 215, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Estilo para botões de edição de imagem */
+.image-editor-section .btn-group {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-editor-section .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border-color: #FFD700;
+    color: #1a1a1a;
+}
+
+/* Qualidade slider */
+.quality-slider-container {
+    padding: 1rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.quality-slider {
+    width: 100%;
+}
+
+/* Touch gestures para mobile */
+@media (max-width: 768px) {
+    .preview-container {
+        touch-action: pan-x pan-y pinch-zoom;
+    }
+    
+    .btn-group {
+        flex-wrap: wrap;
+    }
+    
+    .btn-group .btn {
+        flex: 1 1 auto;
+        min-width: 60px;
+    }
+}
+
+/* Transições suaves */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+button,
+a,
+.drop-zone,
+.nav-link {
+    transition: all 0.3s ease;
+}
+
+/* Notificações melhoradas */
+.alert {
+    animation: slideInRight 0.5s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Histórico de conversões */
+#history-btn,
+#theme-toggle {
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#history-btn:hover,
+#theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Lista de histórico */
+.list-group-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.list-group-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Metadata info */
+.metadata-info ul {
+    margin-top: 1rem;
+}
+
+.metadata-info .list-group-item strong {
+    color: #FFA500;
+}
+
+body.dark-mode .metadata-info .list-group-item strong {
+    color: #FFD700;
+}

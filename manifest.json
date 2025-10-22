@@ -1,0 +1,42 @@
+{
+  "name": "Conversor de Mídia Visual Tech",
+  "short_name": "Conversor VT",
+  "description": "Sistema completo de conversão de imagens, documentos e arquivos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#FFD700",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Converter Imagem",
+      "short_name": "Imagem",
+      "description": "Converter uma imagem para outro formato",
+      "url": "/?tab=images",
+      "icons": [
+        {
+          "src": "assets/images/logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}
+
