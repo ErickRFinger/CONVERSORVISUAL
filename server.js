@@ -26,6 +26,22 @@ if (!fs.existsSync(convertedDir)) {
     fs.mkdirSync(convertedDir, { recursive: true });
 }
 
+// Middleware para servir arquivos estáticos
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/converted', express.static(convertedDir));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Rota para a página principal
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Servir favicon
+app.get('/favicon.ico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'favicon.ico'));
+});
+
 // Auto-cleanup old files (older than 1 hour)
 const cleanupOldFiles = () => {
     const now = Date.now();
