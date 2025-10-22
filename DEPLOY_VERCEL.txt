@@ -1,0 +1,133 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                  🚀 GUIA RÁPIDO DE DEPLOY NO VERCEL              ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+📌 PASSO 1: CRIAR REPOSITÓRIO NO GITHUB
+────────────────────────────────────────────────────────────────────
+
+1. Vá em: https://github.com/new
+2. Nome do repositório: conversor-visual
+3. Deixe público ou privado (como preferir)
+4. NÃO adicione README, .gitignore ou licença
+5. Clique em "Create repository"
+
+
+📌 PASSO 2: ENVIAR CÓDIGO PARA O GITHUB
+────────────────────────────────────────────────────────────────────
+
+Execute estes comandos na pasta do projeto:
+
+git init
+git add .
+git commit -m "Deploy inicial - Sistema de Conversão v4.0"
+git branch -M main
+git remote add origin https://github.com/SEU_USUARIO/conversor-visual.git
+git push -u origin main
+
+
+📌 PASSO 3: FAZER DEPLOY NO VERCEL
+────────────────────────────────────────────────────────────────────
+
+🌐 MÉTODO 1: Via Site (RECOMENDADO)
+───────────────────────────────────
+
+1. Acesse: https://vercel.com
+2. Clique em "Sign Up" ou "Login"
+3. Faça login com sua conta do GitHub
+4. Clique em "New Project"
+5. Encontre o repositório "conversor-visual"
+6. Clique em "Import"
+7. Configurações:
+   ✓ Framework Preset: Other
+   ✓ Build Command: (deixe vazio)
+   ✓ Output Directory: (deixe vazio)
+   ✓ Install Command: npm install
+8. Clique em "Deploy"
+9. Aguarde 2-3 minutos ⏳
+10. ✅ PRONTO! Seu site está no ar!
+
+
+💻 MÉTODO 2: Via CLI
+────────────────────
+
+npm install -g vercel
+vercel login
+vercel --prod
+
+
+📌 PASSO 4: CONFIGURAR DOMÍNIO
+────────────────────────────────────────────────────────────────────
+
+No painel do Vercel:
+1. Clique no seu projeto
+2. Vá em "Settings"
+3. Clique em "Domains"
+4. Adicione: conversorvisual.vercel.app
+5. Salve e aguarde a propagação (1-2 minutos)
+
+
+📌 ATUALIZAÇÕES FUTURAS
+────────────────────────────────────────────────────────────────────
+
+Para atualizar o site após fazer mudanças:
+
+git add .
+git commit -m "Descrição da mudança"
+git push
+
+O Vercel fará o deploy automático! 🎉
+
+
+📌 CORES APLICADAS
+────────────────────────────────────────────────────────────────────
+
+✅ Fundo: Degradê Amarelo → Laranja → Preto
+✅ Botões: Degradê Amarelo/Laranja
+✅ Tabs ativas: Degradê Amarelo/Laranja
+✅ Drop zones: Borda Laranja
+✅ Ícones: Laranja
+✅ Tema: Visual Tech (Amarelo e Preto)
+
+
+📌 ARQUIVOS CRIADOS PARA O VERCEL
+────────────────────────────────────────────────────────────────────
+
+✓ vercel.json         → Configuração do Vercel
+✓ .vercelignore       → Arquivos ignorados no deploy
+✓ README_VERCEL.md    → Documentação completa
+✓ DEPLOY_VERCEL.txt   → Este guia rápido
+✓ server.js           → Adaptado para /tmp no Vercel
+✓ package.json        → Atualizado para Vercel
+
+
+📌 FUNCIONALIDADES ATIVAS
+────────────────────────────────────────────────────────────────────
+
+✅ Conversão de Imagens (Sharp)
+   JPG, PNG, WEBP, BMP, GIF, TIFF, AVIF, HEIF
+
+✅ Conversão de Documentos (Nativa)
+   TXT ↔ HTML, TXT/HTML → PDF (via print)
+
+✅ Compactação/Descompactação (Nativa)
+   ZIP, TAR, TAR.GZ
+
+🎉 100% NATIVO - SEM PROGRAMAS EXTERNOS!
+
+
+📌 SUPORTE
+────────────────────────────────────────────────────────────────────
+
+Problemas? Verifique:
+1. Logs no painel do Vercel
+2. Documentação: https://vercel.com/docs
+3. Limite de 50MB por arquivo
+4. Tempo máximo: 10 segundos (plano gratuito)
+
+
+╔═══════════════════════════════════════════════════════════════════╗
+║                    🎨 VISUAL TECH - v4.0                          ║
+║              Sistema de Conversão 100% Nativo                     ║
+║                  conversorvisual.vercel.app                       ║
+╚═══════════════════════════════════════════════════════════════════╝
+
